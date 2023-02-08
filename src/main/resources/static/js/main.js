@@ -22,7 +22,7 @@ var colors = [
 function connect(event) {
     username = document.querySelector('#name').value.trim();
 
-    if(username) {
+    if (username) {
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
 
@@ -33,7 +33,6 @@ function connect(event) {
     }
     event.preventDefault();
 }
-
 
 
 function onConnected() {
@@ -59,7 +58,7 @@ function onError(error) {
 function send(event) {
     var messageContent = messageInput.value.trim();
 
-    if(messageContent && stompClient) {
+    if (messageContent && stompClient) {
         var chatMessage = {
             sender: username,
             content: messageInput.value,
@@ -78,11 +77,11 @@ function onMessageReceived(payload) {
 
     var messageElement = document.createElement('li');
 
-    if(message.type === 'JOIN') {
+    if (message.type === 'JOIN') {
         messageElement.classList.add('event-message');
         message.content = message.sender + ' joined!';
 
-    } else if(message.type === 'RENAME') {
+    } else if (message.type === 'RENAME') {
         messageElement.classList.add('event-message');
         message.content = message.content + ' changed name to ' + message.sender;
     } else {
@@ -138,4 +137,4 @@ function changeName(event) {
 
 changeUsernameForm.addEventListener('submit', changeName, true)
 usernameForm.addEventListener('submit', connect, true)
-messageForm.addEventListener('submit',  send, true)
+messageForm.addEventListener('submit', send, true)
