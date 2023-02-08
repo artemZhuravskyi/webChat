@@ -7,9 +7,11 @@ var messageForm = document.querySelector('#messageForm');
 var messageInput = document.querySelector('#message');
 var messageArea = document.querySelector('#messageArea');
 var connectingElement = document.querySelector('.connecting');
+var changeUsernameForm = document.querySelector('#changeUsernameForm');
 
 var stompClient = null;
 var username = null;
+var previousName = null;
 
 var colors = [
     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
@@ -30,6 +32,7 @@ function connect(event) {
     }
     event.preventDefault();
 }
+
 
 
 function onConnected() {
@@ -77,21 +80,26 @@ function onMessageReceived(payload) {
     if(message.type === 'JOIN') {
         messageElement.classList.add('event-message');
         message.content = message.sender + ' joined!';
+
+    } else if(message.type === 'RENAME') {
+        messageElement.classList.add('event-message');
+        message.content = message.content + ' changed name to ' + message.sender;
     } else {
-        messageElement.classList.add('chat-message');
+            messageElement.classList.add('chat-message');
 
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(message.sender[0]);
-        avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = getAvatarColor(message.sender);
+            var avatarElement = document.createElement('i');
+            var avatarText = document.createTextNode(message.sender[0]);
+            avatarElement.appendChild(avatarText);
+            avatarElement.style['background-color'] = getAvatarColor(message.sender);
 
-        messageElement.appendChild(avatarElement);
+            messageElement.appendChild(avatarElement);
 
-        var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(message.sender);
-        usernameElement.appendChild(usernameText);
-        messageElement.appendChild(usernameElement);
-    }
+            var usernameElement = document.createElement('span');
+            var usernameText = document.createTextNode(message.sender);
+            usernameElement.appendChild(usernameText);
+            messageElement.appendChild(usernameElement);
+        }
+
 
     var textElement = document.createElement('p');
     var messageText = document.createTextNode(message.content);
@@ -114,5 +122,17 @@ function getAvatarColor(messageSender) {
     return colors[index];
 }
 
+function changeName(event) {
+    previousName = username;
+    username = document.querySelector('#changeName').value.trim();
+
+    stompClient.send("/app/chat.rename",
+        {},
+        JSON.stringify({sender: username, content: previousName, type: 'RENAME'})
+    )
+    event.preventDefault();
+}
+
+changeUsernameForm.addEventListener('submit', changeName, true)
 usernameForm.addEventListener('submit', connect, true)
 messageForm.addEventListener('submit',  send, true)

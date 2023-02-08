@@ -9,7 +9,7 @@ public class Chat {
     private MessageType type;
 
     public enum MessageType {
-        CHAT, JOIN
+        CHAT, JOIN, RENAME
     }
 
 }
